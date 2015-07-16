@@ -5,6 +5,7 @@
   "main": "omnipotent.js",
   "dependencies": {
     "immstruct": "^1.4.1",
+    "lodash.assign": "^3.2.0",
     "omniscient": "^3.2.0"
   },
   "peerDependencies": {
@@ -45,7 +46,7 @@
     "react": "global:React"
   },
   "author": "Mikael Brevik",
-  "license": "mit",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/omniscientjs/omnipotent/issues"
   },
