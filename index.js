@@ -5,7 +5,8 @@ var immstruct = require('omniscient');
 
 module.exports = {
   decorator: {
-    ignore: require('./decorator/ignore')
+    ignore: require('./decorator/ignore'),
+    observer: require('./decorator/observer')
   },
   immstruct: immstruct,
   component: omniscient,
