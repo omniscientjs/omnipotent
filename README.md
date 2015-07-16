@@ -93,14 +93,14 @@ React.render(<View />, document.getElementById('content'));
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
 
-[npm-url]: https://npmjs.org/package/Omnipotent
-[npm-image]: http://img.shields.io/npm/v/Omnipotent.svg?style=flat
+[npm-url]: https://npmjs.org/package/omnipotent
+[npm-image]: http://img.shields.io/npm/v/omnipotent.svg?style=flat
 
-[travis-url]: http://travis-ci.org/omniscientjs/Omnipotent
-[travis-image]: http://img.shields.io/travis/omniscientjs/Omnipotent.svg?style=flat
+[travis-url]: http://travis-ci.org/omniscientjs/omnipotent
+[travis-image]: http://img.shields.io/travis/omniscientjs/omnipotent.svg?style=flat
 
-[depstat-url]: https://gemnasium.com/omniscientjs/Omnipotent
-[depstat-image]: http://img.shields.io/gemnasium/omniscientjs/Omnipotent.svg?style=flat
+[depstat-url]: https://gemnasium.com/omniscientjs/omnipotent
+[depstat-image]: http://img.shields.io/gemnasium/omniscientjs/omnipotent.svg?style=flat
 
 [gitter-url]: https://gitter.im/omniscientjs/omniscient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [gitter-image]: https://badges.gitter.im/Join%20Chat.svg
