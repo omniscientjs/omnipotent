@@ -1,7 +1,7 @@
 'use strict';
 
 var omniscient = require('omniscient');
-var immstruct = require('omniscient');
+var immstruct = require('immstruct');
 
 module.exports = {
   decorator: {
