@@ -12,24 +12,19 @@
     "react": ">=0.12.0 || >=0.14.0-alpha"
   },
   "devDependencies": {
-    "browserify": "^8.1.1",
-    "browserify-shim": "^3.8.2",
     "chai": "^1.9.2",
-    "derequire": "^1.2.0",
     "immstruct": "^1.0.0",
     "immutable": "^3.0.2",
     "jsdom": "^3.1.0",
     "mocha": "^2.0.1",
     "react": "^0.12.2",
-    "uglify-js": "^2.4.15",
     "dox": "^0.6.1",
     "doxme": "git://github.com/mikaelbr/doxme#dev"
   },
   "scripts": {
     "test": "mocha -R spec tests.js ./decorator/**/*-test.js",
     "test-watch": "mocha -G -w -R min tests.js ./decorator/**/*-test.js",
-    "dist": "node makeBundle.js",
-    "build-docs": "cat component.js shouldupdate.js cached.js | dox -r | doxme > api.md"
+    "build-docs": "cat decorator/*.js helper/*.js index.jns | dox -r | doxme > api.md"
   },
   "repository": {
     "type": "git",
@@ -40,11 +35,10 @@
     "functional",
     "virtual-dom",
     "react",
-    "immutable"
+    "immutable",
+    "immstruct",
+    "omniscient helpers"
   ],
-  "browserify-shim": {
-    "react": "global:React"
-  },
   "author": "Mikael Brevik",
   "license": "MIT",
   "bugs": {
