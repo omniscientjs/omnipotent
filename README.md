@@ -35,7 +35,7 @@ var observer = require('omnipotent').decorator.observer;
 
 ### Usage
 
-```js
+```jsx
 var structure = immstruct({ hero { name: 'Natalia Romanova' } });
 
 var Title = component('View', ({hero}) => <h1>{name.deref()}</h1>);
