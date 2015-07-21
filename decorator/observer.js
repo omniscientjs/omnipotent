@@ -6,22 +6,25 @@ var assign = require('lodash.assign');
 
 module.exports = function observer (structure, fields, Decoratee) {
   var isJSX = !Decoratee.jsx;
+  var unobservers = [];
+
   var composedDisplayName = 'Observer' +
     (isJSX ? Decoratee.displayName : Decoratee.jsx.displayName);
 
-  var unobservers = [], references = {};
+  var references = Object.keys(fields).reduce(function (refs, name) {
+    var reference = structure.reference(fields[name]);
+    refs[name] = reference;
+
+    return refs;
+  }, {});
+
   var extraMethods = {
-    componentWillMount: function () {
+    componentDidMount: function () {
       var reference, comp = this;
       var update = function () { comp.forceUpdate(); };
-
-      for(var name in fields) {
-        if (!fields.hasOwnProperty(name)) continue;
-        reference = structure.reference(fields[name]);
-        references[name] = reference;
-
-        unobservers = unobservers.concat(reference.observe(update));
-      }
+      unobservers = Object.keys(references).map(function (name) {
+        return references[name].observe(update);
+      });
     },
 
     componentWillUnmount: function () {

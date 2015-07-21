@@ -4,7 +4,7 @@
   "description": "A library combining Omniscient.js and Immstruct to a opinionated set of tools.",
   "main": "omnipotent.js",
   "dependencies": {
-    "immstruct": "^1.4.1",
+    "immstruct": "^2.0.0",
     "lodash.assign": "^3.2.0",
     "omniscient": "^3.2.0"
   },
