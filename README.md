@@ -19,10 +19,45 @@ Read more about Omniscient.js in the [repository README](https://github.com/omni
 
 Decorators are modifiers for functions or components. Without modifying the original target, it extends and creates a new entity which has additional features or different behavior. Read more about decorators in [Reginald Braithwaite book Allongé](https://leanpub.com/javascriptallongesix/read#decorators).
 
+### `observer(structure : ImmstructStructure, fields : string|Array<string>, component : Component)`
+
+The `observer` decorator is a very useful one if you need horizontal data dependencies. If you require one of your components to get injected data automatically and update everytime that data changes.
+
+#### Include
+
+Require the decorator by doing:
+
+```js
+var observer = require('omnipotent/decorator/observer');
+// or
+var observer = require('omnipotent').decorator.observer;
+```
+
+### Usage
+
+```js
+var structure = immstruct({ hero { name: 'Natalia Romanova' } });
+
+var Title = component('View', ({hero}) => <h1>{name.deref()}</h1>);
+
+var ObservedTitle = observer(structure, {
+  hero: ['hero', 'name'] // key path in structure
+}, Title);
+
+render(ObservedTitle({}));
+
+// Update structure and component
+structure.cursor('hero').set('name', 'Black Widow');
+
+// Also for things like async fetch
+fetch('./hero.json')
+  .then(r => r.json())
+  .then(d => structure.cursor().set('hero', Immutable.Map(d));
+```
+
 ### `ignore(fields : string|Array<string>, component : Component)`
 
-The `ignore` decorator is used to create components which ignore change on
-certain property names on props passed to a component.
+The `ignore` decorator is used to create components which ignore change on certain property names on props passed to a component.
 
 #### Include
 
