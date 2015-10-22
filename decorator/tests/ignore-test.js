@@ -3,8 +3,7 @@
 var chai = require('chai');
 var jsdom = require('jsdom');
 
-var React  = require('react/addons'),
-    ReactTestUtils = React.addons.TestUtils;
+var React  = require('react/addons');
 
 var DOM = React.DOM;
 
@@ -413,18 +412,27 @@ describe('ignore-decorator', function () {
       done();
     });
   });
-
   beforeEach(function () {
-    global.document = jsdom.jsdom('<html><body></body></html>');
-    global.window = global.document.parentWindow;
+    // React needs a dom before being required
+    // https://github.com/facebook/react/blob/master/src/vendor/core/ExecutionEnvironment.js#L39
+    global.document = jsdom.jsdom('<html><body><div id="app"></div></body></html>');
+    global.window = global.document.defaultView;
+    global.navigator = global.window.navigator;
   });
 
   afterEach(function () {
     delete global.document;
     delete global.window;
+    delete global.navigator;
   });
+
+  function render (component) {
+    React.render(component, global.document.querySelector('#app'));
+  }
+
 });
 
 function render (component) {
-  React.render(component, global.document.body);
+  var div = global.document.createElement('div');
+  React.render(component, div);
 }

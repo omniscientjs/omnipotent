@@ -13,13 +13,13 @@
   },
   "devDependencies": {
     "chai": "^1.9.2",
+    "dox": "^0.6.1",
+    "doxme": "git://github.com/mikaelbr/doxme#dev",
     "immstruct": "^1.0.0",
     "immutable": "^3.0.2",
-    "jsdom": "^3.1.0",
+    "jsdom": "^7.0.2",
     "mocha": "^2.0.1",
-    "react": "^0.12.2",
-    "dox": "^0.6.1",
-    "doxme": "git://github.com/mikaelbr/doxme#dev"
+    "react": "^0.12.2"
   },
   "scripts": {
     "test": "mocha -R spec tests.js ./decorator/**/*-test.js",
