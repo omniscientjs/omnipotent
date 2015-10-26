@@ -59,9 +59,7 @@ var shouldUpdate = require('omniscient/shouldupdate');
  */
 module.exports = function (fields, Decoratee) {
   fields = arrify(fields);
-  var isJSX = !Decoratee.jsx;
-  var composedDisplayName = 'IgnoredFields' +
-    (isJSX ? Decoratee.displayName : Decoratee.jsx.displayName);
+  var composedDisplayName = 'IgnoredFields' + (Decoratee.displayName || Decoratee.name);
 
   var extraMethods = {
     shouldComponentUpdate: shouldUpdate.withDefaults({
@@ -75,11 +73,8 @@ module.exports = function (fields, Decoratee) {
     componentWillReceiveProps: createComponentWillReceiveProps(fields)
   };
 
-  var IgnoredComponent = component(composedDisplayName, extraMethods, function (props) {
-    return isJSX ? React.createElement(Decoratee, props) : Decoratee(props);
-  });
-
-  return isJSX ? IgnoredComponent.jsx : IgnoredComponent;
+  var IgnoredComponent = component(composedDisplayName, extraMethods, Decoratee);
+  return IgnoredComponent;
 };
 
 function createComponentWillMount(staticsFields) {

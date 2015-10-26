@@ -4,8 +4,8 @@ var jsdom = require('jsdom');
 var immstruct = require('immstruct');
 var component = require('omniscient');
 
-var React  = require('react/addons'),
-    ReactTestUtils = React.addons.TestUtils;
+var React  = require('react');
+var ReactDOM  = require('react-dom');
 
 var should = chai.should();
 
@@ -187,8 +187,7 @@ describe('observer', function () {
   });
 
   beforeEach(function () {
-    require('react/lib/ExecutionEnvironment').canUseDOM = true;
-    global.document = jsdom.jsdom('<html><body></body></html>');
+    global.document = jsdom.jsdom('<html><body><div id="app"></div></body></html>');
     global.window = global.document.parentWindow;
   });
 
@@ -196,9 +195,9 @@ describe('observer', function () {
     delete global.document;
     delete global.window;
   });
+
+  function render (component) {
+    ReactDOM.render(component, global.document.querySelector('#app'));
+  }
+
 });
-
-
-function render (component) {
-  React.render(component, global.document.body);
-}

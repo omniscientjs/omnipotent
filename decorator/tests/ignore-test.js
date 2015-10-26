@@ -3,7 +3,8 @@
 var chai = require('chai');
 var jsdom = require('jsdom');
 
-var React  = require('react/addons');
+var React  = require('react');
+var ReactDOM  = require('react-dom');
 
 var DOM = React.DOM;
 
@@ -42,20 +43,6 @@ describe('ignore-decorator', function () {
     render(IgnorableComponent({ ignore: 'hello', another: 'baz' }));
 
     renderCalled.should.equal(1);
-  });
-
-  it('should support jsx', function () {
-    var renderCalled = 0;
-    var Component = component(function () {
-      renderCalled++;
-      return React.DOM.text(null, 'hello');
-    });
-
-    var IgnorableComponent = ignore('ignore', Component.jsx);
-    render(React.createElement(IgnorableComponent, { ignore: 'foo', another: 'bar' }));
-    render(React.createElement(IgnorableComponent, { ignore: 'hello', another: 'bar' }));
-    render(React.createElement(IgnorableComponent, { ignore: 'hello', another: 'baz' }));
-    renderCalled.should.equal(2);
   });
 
   describe('hot swapping statics', function () {
@@ -108,9 +95,9 @@ describe('ignore-decorator', function () {
         }
       };
 
-      var Component = ignore('statics', component([mixin], function (input, output) {
+      var Component = ignore('statics', component([mixin], function (input) {
         renderCalled = renderCalled + 1;
-        onChange.should.equal(output.onChange);
+        onChange.should.equal(input.statics.onChange);
         return DOM.text(null, 'hello');
       }));
 
@@ -490,12 +477,7 @@ describe('ignore-decorator', function () {
   });
 
   function render (component) {
-    React.render(component, global.document.querySelector('#app'));
+    ReactDOM.render(component, global.document.querySelector('#app'));
   }
 
 });
-
-function render (component) {
-  var div = global.document.createElement('div');
-  React.render(component, div);
-}

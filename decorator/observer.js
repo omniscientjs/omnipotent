@@ -56,11 +56,9 @@ var assign = require('lodash.assign');
  * @returns {Component} React Component
  */
 module.exports = function observer (structure, fields, Decoratee) {
-  var isJSX = !Decoratee.jsx;
   var unobservers = [];
 
-  var composedDisplayName = 'Observer' +
-    (isJSX ? Decoratee.displayName : Decoratee.jsx.displayName);
+  var composedDisplayName = 'Observer' + (Decoratee.displayName || Decoratee.name);
 
   var references = Object.keys(fields).reduce(function (refs, name) {
     var reference = structure.reference(fields[name]);
@@ -85,17 +83,17 @@ module.exports = function observer (structure, fields, Decoratee) {
     }
   };
 
-  var IgnoredComponent = component(composedDisplayName, extraMethods, function (props) {
+  var ObservedComponent = component(composedDisplayName, extraMethods, function (props) {
     var extendingProps = {};
     for(var name in references) {
       if (!references.hasOwnProperty(name)) continue;
       extendingProps[name] = references[name].cursor();
     }
     var newProps = assign({}, props, extendingProps);
-    return isJSX ? React.createElement(Decoratee, newProps) : Decoratee(newProps);
+    return Decoratee(newProps);
   });
 
-  return isJSX ? IgnoredComponent.jsx : IgnoredComponent;
+  return ObservedComponent;
 };
 
 function invoke (fn) {
