@@ -68,7 +68,7 @@ module.exports = function observer (structure, fields, Decoratee) {
   }, {});
 
   var extraMethods = {
-    componentDidMount: function () {
+    componentWillMount: function () {
       var reference, comp = this;
       var update = function () { comp.forceUpdate(); };
       unobservers = Object.keys(references).map(function (name) {
@@ -79,7 +79,6 @@ module.exports = function observer (structure, fields, Decoratee) {
     componentWillUnmount: function () {
       unobservers.forEach(invoke);
       unobservers = [];
-      references = {};
     }
   };
 
