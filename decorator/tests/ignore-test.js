@@ -71,9 +71,9 @@ describe('ignore-decorator', function () {
         }
       };
 
-      var Component = ignore('statics', component([mixin], function (input, output) {
+      var Component = ignore('statics', component([mixin], function (input) {
         renderCalled = renderCalled + 1;
-        onChange = output.onChange;
+        onChange = input.statics.onChange;
         return DOM.text(null, 'hello');
       }));
 
@@ -141,17 +141,19 @@ describe('ignore-decorator', function () {
     it('statics handlers get updated', function (done) {
       var renders = 0;
       var onChange = null;
-      var statics = statics;
-      var Component = component(function (input, output) {
-        onChange = output.onChange;
-        statics = output;
+      var statics;
+      var Component = ignore('statics', component(function (input) {
+        onChange = input.statics.onChange;
+        statics = input.statics;
         renders = renders + 1;
         return DOM.text(null, 'hello');
-      });
+      }));
 
-      render(Component({}, {
-        onChange: function () {
-          return 1;
+      render(Component({
+        statics: {
+          onChange: function () {
+            return 1;
+          }
         }
       }));
 
@@ -165,9 +167,11 @@ describe('ignore-decorator', function () {
       onChange().should.equal(1);
       statics.onChange().should.equal(1);
 
-      render(Component({}, {
-        onChange: function () {
-          return 2;
+      render(Component({
+        statics: {
+          onChange: function () {
+            return 2;
+          }
         }
       }));
 
@@ -182,9 +186,11 @@ describe('ignore-decorator', function () {
 
       var onChange2 = onChange;
 
-      render(Component({a: 1}, {
-        onChange: function () {
-          return 3;
+      render(Component({a: 1,
+        statics: {
+          onChange: function () {
+            return 3;
+          }
         }
       }));
 
@@ -197,9 +203,11 @@ describe('ignore-decorator', function () {
       onChange().should.equal(3);
       statics.onChange().should.equal(3);
 
-      render(Component({a: 1}, {
-        onChange: function () {
-          return 4;
+      render(Component({a: 1,
+        statics: {
+          onChange: function () {
+            return 4;
+          }
         }
       }));
 
@@ -219,31 +227,33 @@ describe('ignore-decorator', function () {
       var renders = 0;
       var onChange = null;
       var statics = statics;
-      var Component = component(function (input, output) {
-        onChange = output.onChange;
-        statics = output;
+      var Component = ignore('statics', component(function (input) {
+        statics = input.statics;
+        if (statics && statics.onChange)
+          onChange = statics.onChange;
+
         renders = renders + 1;
         return DOM.text(null, 'hello');
-      });
+      }));
 
       var changeHandler = function () { return 1; };
       var handlers = {onChange: changeHandler };
 
-      render(Component({}, handlers));
+      render(Component({statics: handlers}));
 
       renders.should.equal(1);
       onChange.delegee.should.equal(changeHandler);
       onChange().should.equal(1);
       statics.onChange().should.equal(1);
 
-      render(Component({}, handlers));
+      render(Component({ statics: handlers }));
 
       renders.should.equal(1);
       onChange.delegee.should.equal(changeHandler);
       onChange().should.equal(1);
       statics.onChange().should.equal(1);
 
-      render(Component({a: 1}, handlers));
+      render(Component({a: 1, statics: handlers }));
 
       renders.should.equal(2);
       onChange.delegee.should.equal(changeHandler);
@@ -257,44 +267,48 @@ describe('ignore-decorator', function () {
       var renders = 0;
       var onChange = null;
       var statics = statics;
-      var Component = component(function (input, output) {
-        onChange = output.onChange;
-        statics = output;
+      var Component = ignore('statics', component(function (input) {
+        statics = input.statics;
+        onChange = statics.onChange;
         renders = renders + 1;
         return DOM.text(null, 'hello');
-      });
+      }));
 
       var changeHandler = function () { return 1; };
 
-      render(Component({}, {onChange: changeHandler}));
+      render(Component({
+        statics: {
+          onChange: changeHandler
+        }
+      }));
 
       renders.should.equal(1);
       onChange.delegee.should.equal(changeHandler);
       onChange().should.equal(1);
       statics.onChange().should.equal(1);
 
-      render(Component({}, {onChange: changeHandler}));
+      render(Component({ statics: {onChange: changeHandler}}));
 
       renders.should.equal(1);
       onChange.delegee.should.equal(changeHandler);
       onChange().should.equal(1);
       statics.onChange().should.equal(1);
 
-      render(Component({a: 1}, {onChange: changeHandler}));
+      render(Component({a: 1, statics: { onChange: changeHandler }}));
 
       renders.should.equal(2);
       onChange.delegee.should.equal(changeHandler);
       onChange().should.equal(1);
       statics.onChange().should.equal(1);
 
-      render(Component({a: 1}, {onChange: onChange}));
+      render(Component({a: 1, statics: {onChange: onChange}}));
 
       renders.should.equal(2);
       onChange.delegee.should.equal(changeHandler);
       onChange().should.equal(1);
       statics.onChange().should.equal(1);
 
-      render(Component({a: 2}, {onChange: onChange}));
+      render(Component({a: 2, statics: {onChange: onChange}}));
 
       renders.should.equal(3);
       onChange.delegee.should.equal(changeHandler);
@@ -308,36 +322,41 @@ describe('ignore-decorator', function () {
       var renders = [];
       var handlers = {};
 
-      var A = component('a', function (input, output) {
+      var A = ignore('statics', component('a', function (input) {
         renders.push("A");
-        handlers.a = output.onChange;
+        handlers.a = input.statics.onChange;
         return DOM.div({key: 'a'}, [
-          B('b', input.b, output),
-          C('c', input.c, {onChange: output.onChange})
+          B('b', { b: input.b, statics: input.statics }),
+          C('c', { c: input.c, statics: input.statics })
         ]);
-      });
+      }));
 
-      var B = component('b', function (input, output) {
+      var B = ignore('statics', component('b', function (input) {
         renders.push("B");
-        handlers.b = output.onChange;
-        return DOM.span({ key: 'b'}, [input.text ]);
-      });
+        handlers.b = input.statics.onChange;
+        return DOM.span({ key: 'b'}, [input.b.text]);
+      }));
 
-      var C = component('c', function (input, output) {
+      var C = ignore('statics', component('c', function (input) {
         renders.push("C");
-        handlers.c = output.onChange;
-        return DOM.div({ key: 'c'}, [D('d', input.d, {onChange: output.onChange})]);
-      });
+        handlers.c = input.statics.onChange;
+        return DOM.div({ key: 'c'},
+          D('d', {
+            d: input.c.d,
+            statics: input.statics
+          })
+        );
+      }));
 
-      var D = component('d', function (input, output) {
+      var D = ignore('statics', component('d', function (input) {
         renders.push("D");
-        handlers.d = output.onChange;
-        return DOM.span({ key: 'd'}, input.d);
-      });
+        handlers.d = input.statics.onChange;
+        return DOM.span({ key: 'd'}, [input.d]);
+      }));
 
       var changeHandler = function () { return 1; };
 
-      render(A({b: {text: 1}, c: {d: [2]}}, {onChange: changeHandler}));
+      render(A({b: {text: 1}, c: {d: [2]}, statics: {onChange: changeHandler}}));
 
       renders.splice(0).join('->').should.equal('A->B->C->D');
       handlers.a.delegee.should.equal(changeHandler);
@@ -345,7 +364,7 @@ describe('ignore-decorator', function () {
       handlers.c.delegee.should.equal(changeHandler);
       handlers.d.delegee.should.equal(changeHandler);
 
-      render(A({b: {text: 1}, c: {d: [2]}}, {onChange: changeHandler}));
+      render(A({b: {text: 1}, c: {d: [2]}, statics: {onChange: changeHandler}}));
 
       renders.splice(0).join('->').should.equal('');
       handlers.a.delegee.should.equal(changeHandler);
@@ -353,7 +372,7 @@ describe('ignore-decorator', function () {
       handlers.c.delegee.should.equal(changeHandler);
       handlers.d.delegee.should.equal(changeHandler);
 
-      render(A({b: {text: 11}, c: {d: [2]}}, {onChange: changeHandler}));
+      render(A({b: {text: 11}, c: {d: [2]}, statics: {onChange: changeHandler}}));
 
       renders.splice(0).join('->').should.equal('A->B');
       handlers.a.delegee.should.equal(changeHandler);
@@ -361,7 +380,7 @@ describe('ignore-decorator', function () {
       handlers.c.delegee.should.equal(changeHandler);
       handlers.d.delegee.should.equal(changeHandler);
 
-      render(A({b: {text: 11}, c: {d: [22]}}, {onChange: changeHandler}));
+      render(A({b: {text: 11}, c: {d: [22]}, statics: {onChange: changeHandler}}));
 
       renders.splice(0).join('->').should.equal('A->C->D');
       handlers.a.delegee.should.equal(changeHandler);
@@ -370,7 +389,7 @@ describe('ignore-decorator', function () {
       handlers.d.delegee.should.equal(changeHandler);
 
       var onChange = function () { return 2; };
-      render(A({b: {text: 11}, c: {d: [22]}}, {onChange: onChange}));
+      render(A({b: {text: 11}, c: {d: [22]}, statics: {onChange: onChange}}));
 
       renders.splice(0).join('->').should.equal('');
       handlers.a.delegee.should.equal(onChange);
@@ -383,31 +402,75 @@ describe('ignore-decorator', function () {
 
     it('update no handler to handler', function (done) {
       var renders = [];
-      var handlers = null;
+      var handlers = {};
 
-      var Component = component(function (input, output) {
+      var Component = ignore('ignorable', component(function (input) {
         renders.push(1);
-        handlers = output;
+        handlers.onChange = (input.ignorable || {}).onChange;
         return DOM.text('');
-      });
+      }));
 
       var onChange = function () {};
-      render(Component({}, {}));
-
+      render(Component({}));
 
       renders.length.should.equal(1);
       (handlers.onChange === void 0).should.be.true;
 
-      render(Component({a: 1}, {onChange: onChange}));
+      render(Component({a: 1, ignorable: {onChange: onChange}}));
 
       renders.length.should.equal(2);
       handlers.onChange.delegee.should.equal(onChange);
 
       var onUpdate = function () {};
-      render(Component({a: 1}, {onChange: onUpdate}));
+      render(Component({a: 1, ignorable: {onChange: onUpdate}}));
 
       renders.length.should.equal(2);
       handlers.onChange.delegee.should.equal(onUpdate);
+
+      done();
+    });
+
+    it('adds delagees to multiple ignorables', function (done) {
+      var renders = [];
+      var handlers1 = {};
+      var handlers2 = {};
+
+      var Component = ignore(['ignorable1', 'ignorable2'], component(function (input) {
+        renders.push(1);
+        handlers1.onChange = (input.ignorable1 || {}).onChange;
+        handlers2.onChange = (input.ignorable2 || {}).onChange;
+        return DOM.text('');
+      }));
+
+      var onChange1 = function () {};
+      var onChange2 = function () {};
+      render(Component({}));
+
+      renders.length.should.equal(1);
+      (handlers1.onChange === void 0).should.be.true;
+      (handlers2.onChange === void 0).should.be.true;
+
+      render(Component({
+        a: 1,
+        ignorable1: {onChange: onChange1},
+        ignorable2: {onChange: onChange2}
+      }));
+
+      renders.length.should.equal(2);
+      handlers1.onChange.delegee.should.equal(onChange1);
+      handlers2.onChange.delegee.should.equal(onChange2);
+
+      var onUpdate1 = function () {};
+      var onUpdate2 = function () {};
+      render(Component({
+        a: 1,
+        ignorable1: {onChange: onUpdate1},
+        ignorable2: {onChange: onUpdate2}
+      }));
+
+      renders.length.should.equal(2);
+      handlers1.onChange.delegee.should.equal(onUpdate1);
+      handlers2.onChange.delegee.should.equal(onUpdate2);
 
       done();
     });
