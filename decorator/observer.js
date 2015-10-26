@@ -77,7 +77,7 @@ module.exports = function observer (structure, fields, Decoratee) {
     },
 
     componentWillUnmount: function () {
-      unsubscribers.forEach(invoke);
+      unobservers.forEach(invoke);
       unobservers = [];
       references = {};
     }
