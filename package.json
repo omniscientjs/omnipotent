@@ -1,6 +1,6 @@
 {
   "name": "omnipotent",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A library combining Omniscient.js and Immstruct to a opinionated set of tools.",
   "main": "omnipotent.js",
   "dependencies": {
