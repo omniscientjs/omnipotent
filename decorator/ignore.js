@@ -10,6 +10,9 @@ var shouldUpdate = require('omniscient/shouldupdate');
  * eventemitters for communicating throuch a channel with parents, callbacks,
  * csps, etc.
  *
+ * Functions passed on ignored fields are reused when unchanged, keeping the
+ * implementations/references cross renders.
+ *
  * Require the decorator by doing:
  * ```js
  * var ignore = require('omnipotent/decorator/ignore');
